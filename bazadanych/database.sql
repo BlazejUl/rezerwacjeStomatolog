@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: aplikacja_dentysta
+-- Host: 127.0.0.1    Database: stomatolog_baza_danych
 -- ------------------------------------------------------
 -- Server version	8.0.43
 
@@ -28,7 +28,7 @@ CREATE TABLE `dentist` (
   `password` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,6 +37,7 @@ CREATE TABLE `dentist` (
 
 LOCK TABLES `dentist` WRITE;
 /*!40000 ALTER TABLE `dentist` DISABLE KEYS */;
+INSERT INTO `dentist` VALUES (1,'namee','pass');
 /*!40000 ALTER TABLE `dentist` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56,7 +57,7 @@ CREATE TABLE `dentist_availability` (
   PRIMARY KEY (`id`),
   KEY `id_dentist_idx` (`id_dentist`),
   CONSTRAINT `dentist_availability_id_dentist` FOREIGN KEY (`id_dentist`) REFERENCES `dentist` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,6 +66,7 @@ CREATE TABLE `dentist_availability` (
 
 LOCK TABLES `dentist_availability` WRITE;
 /*!40000 ALTER TABLE `dentist_availability` DISABLE KEYS */;
+INSERT INTO `dentist_availability` VALUES (1,1,'2026-10-19','10:00:00','20:00:00');
 /*!40000 ALTER TABLE `dentist_availability` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,12 +81,12 @@ CREATE TABLE `patient` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
-  `phone_number` varchar(45) NOT NULL,
+  `phone_number` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
   `PESEL` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,6 +95,7 @@ CREATE TABLE `patient` (
 
 LOCK TABLES `patient` WRITE;
 /*!40000 ALTER TABLE `patient` DISABLE KEYS */;
+INSERT INTO `patient` VALUES (1,'namee','pass','678999123',NULL,'123455678900');
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,7 +117,7 @@ CREATE TABLE `patient_note` (
   KEY `id_dentist_idx` (`id_dentist`),
   CONSTRAINT `id_dentist` FOREIGN KEY (`id_dentist`) REFERENCES `dentist` (`id`),
   CONSTRAINT `id_patient` FOREIGN KEY (`id_patient`) REFERENCES `patient` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +147,7 @@ CREATE TABLE `reservation` (
   KEY `reservation_id_patient_idx` (`id_patient`),
   CONSTRAINT `reservation_id_dentist_availability` FOREIGN KEY (`id_dentist_availability`) REFERENCES `dentist_availability` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reservation_id_patient` FOREIGN KEY (`id_patient`) REFERENCES `patient` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,12 +156,116 @@ CREATE TABLE `reservation` (
 
 LOCK TABLES `reservation` WRITE;
 /*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
+INSERT INTO `reservation` VALUES (1,1,1,'10:00:00','11:00:00'),(2,1,1,'11:00:00','12:00:00'),(3,1,1,'12:00:00','13:00:00');
 /*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping routines for database 'aplikacja_dentysta'
+-- Dumping events for database 'stomatolog_baza_danych'
 --
+
+--
+-- Dumping routines for database 'stomatolog_baza_danych'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `add_availability` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_availability`(
+IN p_id_dentist int,
+IN p_day DATE,
+IN p_start_time time,
+In p_end_time time
+)
+BEGIN
+insert into dentist_availability(id_dentist, day, start_time, end_time)
+values(p_id_dentist, p_day, p_start_time, p_end_time);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `add_dentist` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_dentist`(
+IN p_name varchar(45),
+IN p_password varchar(45)
+)
+BEGIN
+insert into dentist(`name`,`password`)
+values(p_name, p_password);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `add_note` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_note`(
+IN p_id_patient int,
+IN p_patient_note varchar(120),
+IN p_add_date datetime,
+In p_id_dentist int
+)
+BEGIN
+insert into patient_note(id_patient, patient_note, add_date, id_dentist)
+values(p_id_patient, p_patient_note, p_add_date, p_id_dentist);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `add_patient` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_patient`(
+IN p_name varchar(45),
+IN p_password varchar(45),
+IN p_phone_number varchar(45),
+In p_email varchar(45),
+In p_PESEL varchar(45)
+)
+BEGIN
+insert into patient(name, password, email, phone_number, PESEL)
+values(p_name, p_password, p_phone_number, p_email, p_PESEL);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `add_reservation_safely` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -172,26 +279,32 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `add_reservation_safely`(
 IN p_id_dentist_availability INT,
 IN p_id_patient INT,
-IN p_start TIME
+IN p_start TIME,
+IN p_end TIME
 )
 BEGIN
 declare conflict_count INT;
-declare p_end TIME;
 
-set p_end = date_add(p_start, interval 1 hour);
+START TRANSACTION;
+
+SELECT id FROM dentist_availability
+where id = p_id_dentist_availability
+for update;
 
 SELECT count(*) INTO conflict_count
-FROM reservations
-WHERE id_dentist_availability = p_id_dentist_availability
+FROM reservation
+WHERE id = p_id_dentist_availability
 AND `start` < p_end
 AND `end` > p_start;
 
 IF conflict_count > 0 THEN
 signal sqlstate '45000'
 SET message_text = 'wybrany termin jest zajęty.';
+ROLLBACK;
 else
 insert into reservation(id_dentist_availability, `start`, `end`,id_patient)
 values (p_id_dentist_availability, p_start, p_end, p_id_patient);
+COMMIT;
 end if;
 END ;;
 DELIMITER ;
@@ -209,4 +322,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-19 17:33:04
+-- Dump completed on 2026-10-25 18:32:37
